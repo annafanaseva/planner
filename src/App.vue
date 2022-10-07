@@ -3,39 +3,51 @@
     <form class="form-wrapper">
       <div class="input-wrapper">
         <input class="input" v-model.trim="plan" required>
+
         <label class="label">
           <span class="content-name">
-            Add your plan
+            Your plan
           </span>
         </label>
       </div>
+
       <div class="input-wrapper">
         <select class="input" v-model.trim="importance" required>
           <option>1</option>
           <option>2</option>
           <option>3</option>
         </select>
+
         <label class="label">
           <span class="content-name">
             Importance
           </span>
         </label>
       </div>
-      <button type="button" class="button" @click="addList(plan, importance)">Confirm</button>
+
+      <button type="button" class="button" @click="addList(plan, importance)">Add</button>
     </form>
+
     <div class="main-plans">
       <h2>Your plans</h2>
+
       <ol>
         <li v-for="(item, index) of plans" :key="index">
-          <p class="main-plan">{{item.plan}}</p>
+          <p class="main-plan" :class="{'main-plan-ready': item.ready}">{{item.plan}}</p>
+
           <div class="main-stars">
-            <div v-for="i in Number(item.importance)" :key="i" class="main-star">
+            <div v-for="i in item.importance" :key="i" class="main-star">
               <img src="@/assets/img/star.svg" alt="">
             </div>
           </div>
+          <div class="main-plan-buttons">
+            <div class="main-mark" @click="makePlanReady(item)">
+              <img src="@/assets/img/mark.svg" alt="mark">
+            </div>
 
-          <div class="main-trash" @click="deletePlan(index)">
-            <img src="@/assets/img/trash.svg" alt="">
+            <div class="main-trash" @click="deletePlan(index)">
+              <img src="@/assets/img/trash.svg" alt="trash">
+            </div>
           </div>
         </li>
       </ol>
@@ -46,24 +58,31 @@
 <script>
 export default {
   name: 'App',
+
   data() {
     return {
       plans: [
-        { plan: 'do homework', importance: 3 }
+        { plan: 'do homework', importance: 3, ready: false }
       ]
     }
   },
+
   methods: {
     addList(plan, importance) {
       this.plans.unshift({
         plan: plan,
-        importance: importance
+        importance: Number(importance),
+        ready: false
       });
       this.plan = '';
-      this.importance = ''
+      this.importance = '';
     },
     deletePlan(index) {
       this.plans.splice(index, 1);
+    },
+    makePlanReady(item) {
+      item.ready = true;
+      console.log(item);
     }
   }
 }
@@ -165,6 +184,31 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    img {
+      padding: 8px;
+    }
+
+    &:hover img {
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+    }
+  }
+
+  &-mark {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+
+    img {
+      padding: 8px;
+    }
+
+    &:hover img {
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+    }
   }
 
   &-stars {
@@ -175,6 +219,14 @@ export default {
   &-plan {
     text-align: left;
     width: 200px;
+
+    &-ready {
+      text-decoration: line-through;
+    }
+
+    &-buttons {
+      display: flex;
+    }
   }
 }
 
