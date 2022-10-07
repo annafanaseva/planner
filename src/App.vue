@@ -9,13 +9,34 @@
           </span>
         </label>
       </div>
-      <button type="button" class="button" @click="addList(plan)">Confirm</button>
+      <div class="input-wrapper">
+        <select class="input" v-model.trim="importance" required>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+        <label class="label">
+          <span class="content-name">
+            Importance
+          </span>
+        </label>
+      </div>
+      <button type="button" class="button" @click="addList(plan, importance)">Confirm</button>
     </form>
     <div class="main-plans">
       <h2>Your plans</h2>
       <ol>
-        <li v-for="item of plans" :key="item">
-          <p class="main-plan">{{item}}</p>
+        <li v-for="(item, index) of plans" :key="index">
+          <p class="main-plan">{{item.plan}}</p>
+          <div class="main-stars">
+            <div v-for="i in Number(item.importance)" :key="i" class="main-star">
+              <img src="@/assets/img/star.svg" alt="">
+            </div>
+          </div>
+
+          <div class="main-trash" @click="deletePlan(index)">
+            <img src="@/assets/img/trash.svg" alt="">
+          </div>
         </li>
       </ol>
     </div>
@@ -27,13 +48,22 @@ export default {
   name: 'App',
   data() {
     return {
-      plans: []
+      plans: [
+        { plan: 'do homework', importance: 3 }
+      ]
     }
   },
   methods: {
-    addList(plan) {
-      this.plans.push(plan);
-      this.plan = ''
+    addList(plan, importance) {
+      this.plans.unshift({
+        plan: plan,
+        importance: importance
+      });
+      this.plan = '';
+      this.importance = ''
+    },
+    deletePlan(index) {
+      this.plans.splice(index, 1);
     }
   }
 }
@@ -119,10 +149,32 @@ export default {
   &-plans {
     max-width: 500px;
     margin: 50px auto 0;
+
+    ol {
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #7e7a7a;
+    }
+  }
+
+  &-trash {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &-stars {
+    display: flex;
+    align-items: center;
   }
 
   &-plan {
     text-align: left;
+    width: 200px;
   }
 }
 
